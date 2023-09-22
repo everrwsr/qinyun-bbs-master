@@ -1,0 +1,5 @@
+@if(showbtn){
+<a class="btn btn-default btn-xs deleteReply" href="javascript:;" data-id = "${reply.id}" data-toggle="tooltip" title="删除"  ><i class="fa fa-trash"></i></a>
+@}
+<span class="text-info">${reply.user.userName}</span>
+<span class="text-muted">：${reply.content,xss}（${printTime(reply.createTime)}）</span>

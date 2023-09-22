@@ -1,0 +1,36 @@
+{
+  "from":"${pageSize*(pageNumber -1)}",
+  "size":"${pageSize}",
+  "query": {
+    "function_score": {
+      "query": {
+        "match": {
+          "content":"${keyword}"
+        }
+      },
+      "functions": [
+        {
+          "field_value_factor": {
+            "field": "pros",
+            "modifier": "log1p",
+            "factor":1.5
+          }
+        },
+         {
+          "script_score": {
+            "script": "return doc['isAccept'].value== 1 ? 2.0 : 0;"
+          }
+         }
+      ],
+      "boost_mode": "sum"
+    }
+  },
+  "highlight":{
+		"fields":{
+			"content":{
+				"pre_tags":["<font color=\"red\">"],
+				"post_tags":["</font>"]
+			}
+		}
+	}
+}

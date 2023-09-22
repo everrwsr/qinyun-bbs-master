@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QinYun 论坛</title>
+	<base href="${ctxPath}/"/>
+    <meta name="keywords" content="Beetl,BeetlSql">
+    <meta name="description" content="论坛模板">
+    <link rel="shortcut icon" href="static/img/favicon.ico">
+<!-- 	<link href="css/bootstrap.min.css" rel="stylesheet"> -->
+	<link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script><!-- 部分content的里面可能用到jQuery，所以前置了 -->
+    <script src="js/alert.js"></script><!-- 自己写的一个简单的jq弹窗插件 -->
+    <style type="text/css">
+    	.ani{-webkit-transition: all .3s ease-out;-ms-transition: all .3s ease-out;-moz-transition: all .3s ease-out;-o-transition: all .3s ease-out;transition: all .3s ease-out;}
+		.serach .form-control{border-color: #ffce3d;}
+		#serach-btn{border-color: #ffce3d;background: #f56a00;color: #fff;}
+		.serach .form-control:focus {border-color: #ffce3d;box-shadow: inset 0 1px 1px rgba(0,0,0,.075);}
+    	body { padding-top: 70px;font-family: PingFang SC,Microsoft YaHei,sans-serif; background-color: #f9f9f9;}
+    	.navbar-brand>svg{width: 24px;vertical-align: middle;fill:#000;}
+    	.mcount{background-color: orange;position: relative;top: -1px;}
+
+   		.navbar-default{background: #ffce3d;border-color:#fff;}
+   		.navbar-default .navbar-brand , .navbar-default .navbar-nav>li>a{color: #000;}
+   		.navbar-default .navbar-brand:focus, .navbar-default .navbar-brand:hover{ color: #000;}
+   		.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:focus, .navbar-default .navbar-nav>.open>a:hover {color: #000; background-color: #ffbf00;}
+		.navbar-default .navbar-nav>li>a:focus, .navbar-default .navbar-nav>li>a:hover{ color: #000; background-color: #ffbf00;}
+   		
+   		#serach-btn:hover{cursor: pointer;}
+   		
+   		.navbar-default .navbar-toggle:focus, .navbar-default .navbar-toggle:hover {border-color: #f56a00;background-color: #ffce3d;}
+		.navbar-default .navbar-toggle {border-color: #f56a00;}
+   		.navbar-default .navbar-toggle .icon-bar {background-color: #f56a00;}
+   		.navbar-default .navbar-collapse, .navbar-default .navbar-form{border-color: #f56a00}
+/*    		分页插件样式 */
+   		.pagination>li>a, .pagination>li>span,.pagination>li>a:hover{color: #000;}
+		.pagination>li>a:focus, .pagination>li>a:hover, .pagination>li>span:focus, .pagination>li>span:hover{background-color: #ffbf00;    border-color: #ffbf00;color: #fff;}
+    	.pagination>.active>a, .pagination>.active>a:focus, .pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus, .pagination>.active>span:hover{color: #fff;background-color: #f56a00;border-color: #f56a00;}
+    	.pagination>li:first-child>a,.pagination>li:first-child>span, .pagination>li:last-child>a,  .pagination>li:last-child>span{border-radius: 0px}
+   		
+   		.author-panel{background: #fff;padding: 15px;overflow: hidden;}
+    	.author-panel	.head { width: 50%;overflow: hidden;border-radius: 50%;}
+   		.author-panel .name{margin-top: 15px;}
+   		.author-panel .home a{color: #555}
+		.author-panel .help{width: 100%}
+   		
+/*    		滚动条样式 */
+   		::-webkit-scrollbar {width: 10px!important;height: 5px!important;-webkit-appearance: none;}
+		::-webkit-scrollbar-thumb {height: 5px;border: 1px solid transparent;border-top: none;border-bottom: none;-webkit-border-radius: 6px;background-color: rgba(0,0,0,.3);background-clip: padding-box;}
+		
+		.list-group-item.reply{position: relative;}
+		.deleteReply {position: absolute;top: 5px;right: 0;transform: translateX(-10px);}
+    </style>
+</head>
+<body>
+@  var _user = c.currentUser(request, servlet.response); 
+@ var isAdmin = 'admin'== (_user.userName!"");
+@ var allowAdd = c.allowPost(module!null,request, servlet.response);
+<nav class="navbar navbar-default navbar-fixed-top" style="background-color: aliceblue">
+  <div class="container" style="background-color: aliceblue">
+    <div class="navbar-header" style="background-color: aliceblue">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="${ctxPath}">
+      <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1880"><path d="M832.299957 714.965621c-71.047126 88.067778-148.2126 70.077032-148.2126 70.077032 77.615729-65.686025 74.107835-233.597269 74.107835-233.597269 56.979736 6.564509 74.104765 93.439112 74.104765 93.439112 2.635013 53.857629 148.21567 93.439112 148.21567 93.439112C887.304711 721.78698 832.299957 714.965621 832.299957 714.965621zM513.173732 467.12086c0 0-26.707268-15.610536-21.554922-82.356706 0 0 43.672662-370.594433 237.145072-313.196165 0 0 128.243803 88.283696-21.580504 292.610314C707.182354 364.178303 570.780755 504.72634 513.173732 467.12086zM560.578392 504.72634c31.834033 103.172801-49.409316 210.239282-49.409316 210.239282-95.057983 32.713053-67.633377-56.756655-67.633377-56.756655 58.984393-61.013609 42.930765-130.125663 42.930765-130.125663C512.189312 506.013659 560.578392 504.72634 560.578392 504.72634zM214.740806 668.246577c0 0-15.826454-68.054979 9.243525-99.791797 0 0 19.540032 53.137221 64.86431 6.345522 0 0 13.948687-61.868069-50.226938-47.768957 0 0 21.086248-69.096704 66.274426-103.007025-82.760912-100.30652-238.370992-82.821287-238.370992-82.821287-51.842739-30.236652 0-46.715975 0-46.715975 135.454018-0.991584 222.324528 93.439112 222.324528 93.439112-23.989367-126.739543-148.21567-163.520237-148.21567-163.520237-39.818891-48.290843 17.485233-35.68371 17.485233-35.68371 126.141932 81.534991 149.874449 190.310394 154.345274 230.244918 20.531616-12.791327 45.414329-18.281365 75.196633-7.67889 0 0 156.796092 73.606415-24.702612 256.95935C362.956476 668.246577 246.483764 776.989233 214.740806 668.246577zM706.990996 513.219781c30.182416 116.948549-22.903639 201.74584-22.903639 201.74584-59.500139 125.21891-148.21567 46.719044-148.21567 46.719044 93.910856-94.708012 98.807377-256.95935 98.807377-256.95935C675.925467 502.981602 706.990996 513.219781 706.990996 513.219781z" p-id="1881"></path></svg>
+      QinYun-BBS
+      </a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li><a href="">${pageName!"首页综合"}</a></li>
+       <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">板块 <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+           @for(moudle in moduleList){
+				<li><a href="topic/module/${moudle.id}">${moudle.name} </a></li>
+			@}
+          </ul>
+        </li>
+      </ul>
+      <form class="navbar-form navbar-left">
+        <div class="form-group">
+	        <div class="input-group serach">
+	         	<input type="text" class="form-control" id="keyword" name="keyword" placeholder="关键字搜索">
+			  	<span class="input-group-addon" id="serach-btn">搜索</span>
+			</div>
+         </div>
+      </form>
+      
+      <ul class="nav navbar-nav navbar-right">
+		@ if(_user==null){
+				<li><a href="#login-dialog" data-toggle="modal"><i class="fa fa-sign-in"></i> 登录</a></li>
+				<li><a href="#reg-dialog" data-toggle="modal"><i class="fa fa-user-plus"></i> 注册</a></li>
+		@}else{
+
+				@if(allowAdd){
+		  		<li><a href="topic/add"><i class="fa fa-plus"></i> 发帖</a></li>
+				@}
+		  		<li class="dropdown">
+				@ var mcount = c.myMessageCount(_user.id);
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user-circle-o"></i> ${_user.userName} ${mcount > 0?'<span class="badge mcount">'+mcount+'</span> '}<span class="caret"></span></a>
+					<ul class="dropdown-menu" role="menu">
+						<li><a href="javascript:;">你已有${_user.score}积分</a></li>
+						<li><a href="javascript:;">等级：${level(_user.level)}</a></li>
+						@if(isAdmin){
+							<li><a href="javascript:;" id="initEs" data-href="bbs/admin/es/init">初始化文章索引</a></li>
+						@}
+						<li class="divider"></li>
+						<li><a href="myMessage">给我的回复</a></li>
+					</ul>
+				</li>
+				<li><a href="javascript:;" onclick="$.post('bbs/user/logout',function(){location.reload()})"><i class="fa fa-sign-out"></i> 注销</a></li>
+		@}
+       
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+	
+    <div class="container">
+	    <div class="row">
+			<div class="col-sm-9">
+					${layoutContent}
+			</div>
+  			<div class="col-sm-3">
+  					<div class="author-panel hidden-xs">
+                        <b class="name">论坛介绍</b>
+						<div class="home">
+							秦韵——陕西方言文化推广平台
+						</div>
+						<div class="home">
+							陕西方言推广论坛提供了用户友好的账户管理,帖子和评论互动,高效的搜索和标签系统,多媒体支持,私信通知机制,方言学习资源,以及坚实的社区规则和技术支持,旨在鼓励用户学习,分享和交流陕西方言,为方言的传承和推广提供强有力的在线支持。
+
+						</div>
+<!--	  						<div class="home">-->
+<!--	  							官网：-->
+<!--	  							<a href="http://ibeetl.com" target="_Blank"><i class="fa fa-home"> ibeetl.com</i></a>-->
+<!--	  						</div>-->
+<!--	  						<div class="blogs">-->
+<!--	  							博客：-->
+<!--	  							<a href="https://my.oschina.net/xiandafu" target="_Blank">开源中国</a>-->
+<!--	  							<a href="http://git.oschina.net/xiandafu" target="_Blank">码云</a>-->
+
+<!--	  						</div>-->
+<!--                            <div class="blogs">-->
+<!--                                性能研究：-->
+<!--                                <a href="https://gitee.com/xiandafu/dao-benchmark" target="_Blank">Dao工具性能</a>-->
+<!--                                <a href="https://gitee.com/xiandafu/template-benchmark" target="_Blank">模板引擎性能</a>-->
+
+<!--                            </div>-->
+<!--							<div class="projects">-->
+<!--								Beetl：-->
+<!--								<a href="https://gitee.com/xiandafu/beetl" target="_Blank">最快的文本处理引擎</a>-->
+
+
+<!--							</div>-->
+<!--	  						<div class="projects">-->
+<!--	  							BeetlSQL-->
+
+<!--	  							<a href="https://gitee.com/xiandafu/beetlsql" target="_Blank">性能良好Dao工具</a>-->
+<!--	  							-->
+<!--	  						</div>-->
+<!--	  						<div class="projects">-->
+<!--                                本论坛源码-->
+<!--	  							<a href="https://git.oschina.net/xiandafu/QinYun-BBS" target="_Blank">论坛+缓存+搜索</a>-->
+<!--	  							-->
+<!--	  						</div>-->
+<!--	  						<div class="projects">-->
+<!--                                SpringBoot-Plus：-->
+<!--	  							<a href="https://gitee.com/xiandafu/springboot-plus" target="_Blank">权限&数据权限开发平台 </a>-->
+<!--	  							-->
+<!--	  						</div>-->
+<!--							<div class="projects">-->
+<!--								作品5：-->
+<!--								<a href="https://www.kancloud.cn/xiandafu/springboot2-in-practice/1105343" target="_Blank">《SpringBoot 2 实战》</a>-->
+
+<!--							</div>-->
+<!--	  						<div class="QQ">免费qq群：219324263(满),636321496</div>-->
+
+  					</div>
+  			</div>
+	  	</div>
+           	
+    </div>
+   @ if(_user==null){
+	<div class="modal fade" id="login-dialog" tabindex="-1" >
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-body">
+					<form action="bbs/user/login" onsubmit="return ajaxSubmit(this,'reload')">
+		                <div class="form-group">
+							<label>用户名</label>
+							<input type="text" placeholder="请输入您用户名" name="userName"  class="form-control">
+						</div>
+	                       <div class="form-group">
+	                           <label>密码</label>
+								<input type="password" placeholder="请输入密码" name="password" class="form-control">
+	                       </div>
+						<button class="btn btn-primary btn-block" type="submit">登 录</button>
+               		</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="reg-dialog" tabindex="-1" >
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<form class="form-horizontal m-t" id="signupForm" action="user/doRegister" method="POST" onsubmit="return ajaxSubmit(this)">
+			              <div class="form-group">
+			                  <label class="col-sm-3 control-label">用户名：</label>
+			                  <div class="col-sm-8">
+			                      <input id="username" name="userName" class="form-control" type="text" aria-required="true" aria-invalid="true" value="${user.userName!}" class="error">
+			                  </div>
+			              </div>
+			            <div class="form-group">
+			                  <label class="col-sm-3 control-label">密码：</label>
+			                  <div class="col-sm-8">
+			                      <input id="password" name="password" class="form-control" type="text" aria-required="true" aria-invalid="true" class="error" value="${user.password!}">
+			                  </div>
+			              </div>
+			              <div class="form-group">
+			                  <label class="col-sm-3 control-label">E-mail：</label>
+			                  <div class="col-sm-8">
+			                      <input id="email" name="email" class="form-control" type="email" value=${user.email!}>
+			                  </div>
+			              </div>
+			              <div class="form-group">
+			                  <label class="col-sm-3 control-label">公司：</label>
+			                  <div class="col-sm-8">
+			                      <input id="corp" name="corp" class="form-control" type="text" aria-required="true" aria-invalid="false" class="valid" value=${user.corp!}>
+			                  		<span class="help-block m-b-none"><i class="fa fa-info-circle"></i>留下你的公司名字，以方便beetl统计使用者，除非被黑客攻击，网站不会在任何情况下泄露你个人信息</span>
+			                  </div>
+			              </div>
+			              <div class="form-group">
+			                  <label class="col-sm-3 control-label">验证码：</label>
+			                  <div class="col-sm-8" style="position:relative;">
+			                      <input id="code" name="code" class="form-control" type="text" aria-required="true" aria-invalid="false" class="valid">
+			                  		<img src="bbs/user/authImage" onclick="this.src='bbs/user/authImage?_='+Date.now()" title="点击刷新验证码" style="position:absolute;height:32px;top:1px;right:16px;cursor:pointer;border-radius:0 4px 4px 0">
+			                  	</div>
+			              </div>
+			              <div class="form-group">
+			                  <div class="col-sm-8 col-sm-offset-3">
+			                      <button class="btn btn-primary" type="submit">提交</button>
+			                  </div>
+			              </div>
+			          </form>
+				</div>
+			</div>
+		</div>
+	</div>
+   @}
+   
+		
+    <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    @if( _user!=null && requiredEditor!false){
+    <link rel="stylesheet" href="simditor/simditor.min.css" />
+    <script src="//cdn.bootcss.com/marked/0.3.6/marked.min.js"></script>
+    <script src="//cdn.bootcss.com/to-markdown/3.0.3/to-markdown.min.js"></script>
+    <script type="text/javascript" src="simditor/simditor.min.js"></script>
+    <script type="text/javascript">
+		var editor = new Simditor({
+			textarea: $('#postContent'),
+			defaultImage:'',
+			pasteImage:true,
+			cleanPaste:true,
+			toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul','blockquote','code','table','link','image','hr','indent','outdent','alignment','|','markdown'],
+			//按Beetl论坛的用处来看，暂时只需要如下几个语言（HTML、XML、json、java、javascript、markdown、sql）,如有需要再扩展
+			codeLanguages:[{name:'HTML,XML',value:'html'},{name:'JSON',value:'json'},{name:'Java',value:'java'},{name:'JavaScript',value:'js'},{name:'Markdown',value:'markdown'},{name:'SQL',value:'sql'}],
+			upload:{
+				url: 'bbs/upload',
+				fileKey: 'editormd-image-file',
+				connectionCount: 3,
+				leaveConfirm: '上传正在进行中，确定要离开当前页面吗？'
+			}
+		});
+		 function preview(){
+			 	var preWin = window.open('about:blank','preview');
+				preWin.document.write('<meta name="google" value="notranslate"><link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"><style>.panel img{max-width:100% !important;heightLauto !important;}.panel{margin-top:20px;}</style>');
+				preWin.document.write('<div class="container-fluid"><div class="row"><div class="col-sm-8 col-sm-offset-2"><div class="panel panel-default"><div class="panel-heading">内容提交预览</div><div class="panel-body">'+editor.sync()+'</div><div class="panel-footer"><a href="javascript:;" class="btn btn-link" onclick="window.close();">关闭预览</a></div></div></div></div></div>');
+				preWin.document.write('<link href="http://cdn.bootcss.com/highlight.js/9.8.0/styles/github-gist.min.css" rel="stylesheet"><script src="http://cdn.bootcss.com/highlight.js/9.8.0/highlight.min.js"></scr'+'ipt><script>hljs.initHighlightingOnLoad();</scr'+'ipt>');
+				preWin.document.close();
+		}
+    </script>
+    @}
+    <script>
+    //全局表单ajax提交(onsubmit="return ajaxSubmit(this,reload)")
+	 function ajaxSubmit(form,reload){
+		 form = $(form);
+		 $.post(form.attr('action'),form.serialize(),function(json){
+			 json.err?$.alert(json.msg):reload?location.reload():location.replace(json.msg||'');
+		 })
+		 return false;
+	 }
+    </script>
+<script type="text/javascript">
+$(function(){
+    	$('#initEs').on('click',function(e){
+    		var href = $(this).data('href');
+    		
+    		$.post(href,null,function(json){
+	   			 $.alert(json.msg);
+	   		 })
+    	});
+	
+	 getKeword();
+	
+	$('#serach-btn').on('click',function(){
+		var keyword = $('#keyword').val().trim();
+		keyword = encodeURI(keyword);
+		location.href = '?keyword='+keyword;
+	})
+	$("#keyword").on('keydown',function (e) {
+        if (e.keyCode == 13) {
+			stopDefault(e);
+        	$('#serach-btn').trigger('click');
+        }
+    });
+})
+
+
+	function stopDefault(e) {  
+        //如果提供了事件对象，则这是一个非IE浏览器   
+        if(e && e.preventDefault) {  
+        　　//阻止默认浏览器动作(W3C)  
+        　　e.preventDefault();  
+        } else {  
+        　　//IE中阻止函数器默认动作的方式   
+        　　window.event.returnValue = false;   
+        }  
+        return false;  
+    }  
+    
+    function getKeword(){
+    	var keyword = getQueryString('keyword')
+    	if(keyword){
+    		$('#keyword').val(keyword)
+    	}
+    	
+    }
+    
+	function getQueryString(name){
+	     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+	     var r = window.location.search.substr(1).match(reg);
+	     if(r!=null)return  decodeURI(r[2]); return null;
+	}
+</script>
+@ include("/common/baidu.html"){}
+</body>
+</html>

@@ -1,0 +1,76 @@
+@layout("/common/layout.html"){
+@ var _user = c.currentUser(request, servlet.response); 
+@ var isAdmin = 'admin'== (_user.userName!"");
+<style>
+
+   		.result{color: #aaa; font-size: 16px;font-style: italic;}
+
+		.topic{position:relative;width: 100%;overflow: hidden;padding: 10px;background: #fff; margin: 14px 0;}
+		.topic .admin{position: absolute;top: 10px;right: 10px;}
+/*     	.topic:hover{cursor: pointer;box-shadow: 0 5px 20px -4px rgba(153, 153, 153, 0.38); transform: translateY(-2px);} */
+     	.topic:hover{cursor: pointer;}
+    	.topic .author{font-size: 14px;color:#333;margin-bottom: 5px;}
+    	.topic .author a{color:#333;}
+    	.topic .author span{color: #999;}
+    	.topic .author .label{color: #fff}
+    	.topic .author .type{color: #999;font-size: 14px;}
+    	.topic .post .tiezi{color: #333;font-size: 15px;} 
+   		.topic .post .frist-post {max-height: 80px;overflow: hidden;}
+   		.frist-post>.pre{white-space: pre-wrap;    white-space: -moz-pre-wrap;    white-space: -pre-wrap;    white-space: -o-pre-wrap;    display: unset;    padding: unset;    margin: unset;    font-size: unset;    line-height: unset;    color: unset;    word-break: unset;    word-wrap: unset;    background-color: unset;    border: unset;    border-radius: unset;}
+</style>
+			<h5><span class="result">${pageName!"",xss} </span>的搜索结果：<span class="result">${resultnum}</span> 条</h5>
+			<hr/>
+			<div id="searcher-list">
+       		@ for(searcher in searcherPage.list!){
+				<div class="topic ani">
+					<div class="author">
+							@if(searcher.isUp>0){
+									<span class="label label-danger">重要</span>
+							@}
+							@if(searcher.isNice>0){
+									<span class="label label-warning ">精品</span> 
+							@}
+						<a href="javascript:;">${searcher.userName}</a>
+						<span>&nbsp;&nbsp;${printTime(searcher.createTime)}&nbsp;&nbsp;</span>
+						<span>回答: ${searcher.postCount}</span>
+						<span>浏览: ${searcher.pv}</span>
+						<span>匹配度:${searcher.score,'##.##'}</span>
+						&nbsp;&nbsp;<a class="type" href="topic/module/${searcher.moduleId}">${searcher.moduleName}</a>
+					</div>							
+					<div class="post">
+							<a class="tiezi" href="topic/${searcher.topicId}">${searcher.topicContent}</a>&nbsp;&nbsp;
+							<div class="frist-post"><pre class="pre">${searcher.postContent}</pre></div>
+					</div>
+					@if(isAdmin){
+					<div class="admin" data-topic=${searcher.topicId}>
+							<a href="javascript:;"  class="btn btn-default btn-xs nice-btn">精华</a>
+							<a href="javascript:;"  class="btn btn-default btn-xs top-btn">置顶</a>
+							<a href="javascript:;"  class="btn btn-default btn-xs del-btn">删除</a>
+					</div>
+					@}
+				</div>
+				
+				
+				
+			@}
+       </div>
+	   <#page query="${searcherPage}"/>
+	    <script>
+       $('#searcher-list').on('click','.nice-btn',function(){
+    	   $.post('admin/topic/nice/'+$(this).parents('div').data('topic'),function(json){
+    		   json.err||location.reload();
+    	   })
+       }).on('click','.top-btn',function(){
+    	   $.post('admin/topic/up/'+$(this).parents('div').data('topic'),function(json){
+    		   json.err||location.reload();
+    	   })
+       }).on('click','.del-btn',function(){
+    	   var topicid = $(this).parents('div').data('topic');
+    	   $.confirm('确定要删除该主题么？',function(e){
+    		   e&&$.post('admin/topic/delete/'+topicid,function(json){
+        		   json.err||location.reload();
+        	   })
+    	   })
+       })
+       </script>
+@}    

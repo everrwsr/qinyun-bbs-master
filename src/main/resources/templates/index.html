@@ -1,0 +1,78 @@
+@ layout("/common/layout.html"){
+@ var _user = c.currentUser(request, servlet.response); 
+@ var isAdmin = 'admin'== (_user.userName!"");
+
+<style>
+		.topic{position:relative;width: 100%;overflow: hidden;padding: 15px;background: #fff; margin: 14px 0;}
+		.topic .admin{position: absolute;top: 10px;right: 10px;}
+/*     	.topic:hover{cursor: pointer;box-shadow: 0 5px 20px -4px rgba(153, 153, 153, 0.38); transform: translateY(-2px);} */
+     	.topic:hover{cursor: pointer;}
+    	.topic .author{font-size: 14px;color:#333;margin-bottom: 5px;}
+    	.topic .author a{color:#333;}
+    	.topic .author span{color: #999;}
+    	.topic .author .label{color: #fff}
+    	.topic .post .tiezi{color: #333;font-size: 15px;} 
+    	.topic .post .type{color: #bfbfbf;font-size: 14px;}
+
+</style>
+			<div class="postTitle">${pagename!}</div>
+			<div id="post-list">
+       		@ for(topic in topicPage.list!){
+				<div class="topic ani">
+					<div class="author">
+							@if(topic.isUp>0){
+									<span class="label label-danger">重要</span>
+							@}
+							@if(topic.isNice>0){
+									<span class="label label-warning ">精品</span> 
+							@}
+						<a href="javascript:;">${topic.tails.userName}</a>
+						<span>&nbsp;&nbsp;${printTime(topic.createTime)}&nbsp;&nbsp;</span>
+						<span>回答: ${topic.postCount}</span>
+						<span>浏览: ${topic.pv}</span>
+					</div>							
+					<div class="post">
+							<a class="tiezi" href="topic/${topic.id}">${topic.content,xss}</a>&nbsp;&nbsp;
+							<a class="type" href="topic/module/${topic.moduleId}">${topic.tails.moduleName}</a>
+					</div>
+					@if(isAdmin){
+					<div class="admin" data-topic=${topic.id}>
+							<a href="javascript:;"  class="btn btn-default btn-xs nice-btn">精华</a>
+							<a href="javascript:;"  class="btn btn-default btn-xs top-btn">置顶</a>
+							<a href="javascript:;"  class="btn btn-default btn-xs del-btn">删除</a>
+              <a href="javascript:;"  class="btn btn-default btn-xs del-user-btn">删除此人</a>
+					</div>
+					@}
+				</div>
+			@}
+       </div>
+	   <#page query="${topicPage}"/>
+       <script>
+       $('#post-list').on('click','.nice-btn',function(){
+    	   $.post('admin/topic/nice/'+$(this).parents('div').data('topic'),function(json){
+    		   json.err||location.reload();
+    	   })
+       }).on('click','.top-btn',function(){
+    	   $.post('admin/topic/up/'+$(this).parents('div').data('topic'),function(json){
+    		   json.err||location.reload();
+    	   })
+       }).on('click','.del-user-btn',function(){
+    	   $.post('admin/topic/deleteUser/'+$(this).parents('div').data('topic'),function(json){
+    		   json.err||location.reload();
+    	   })
+       }).on('click','.del-btn',function(){
+    	   var topicid = $(this).parents('div').data('topic');
+    	   $.confirm('确定要删除该主题么？',function(e){
+    		   e&&$.post('admin/topic/delete/'+topicid,function(json){
+        		   json.err||location.reload();
+        	   })
+    	   })
+       }).on('click','.topic',function(e){
+    	   var _this = $(this);
+    	   var href  = _this.find('.tiezi');
+			if($(e.target).parents('.admin').length == 0){
+				  location.href = href.attr('href')
+			}
+       })
+       </script>
+@}    

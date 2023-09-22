@@ -1,0 +1,10 @@
+<form class="form-search" >
+	<input type="hidden" name="postId" value="${post.id!}"/>
+	<input type="hidden" name="topicId" value="${topic.id!}"/>
+	<div class="input-group">
+      <input type="text" placeholder="回复" class="form-control" name="content"> 
+      <span class="input-group-btn">
+        <button type="button" class="btn btn-default"  data="reply/save" onclick="return saveReply(this)">保存</button>
+      </span>
+    </div>
+</form>

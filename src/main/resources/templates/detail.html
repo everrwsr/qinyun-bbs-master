@@ -1,0 +1,140 @@
+@layout("/common/layout.html",{requiredEditor:true}){
+@ var _user = c.currentUser(request, servlet.response); 
+@ var isAdmin = 'admin'== (_user.userName!"");
+		<h3>主题：${topic.content,xss="50"}</h3>
+		@for(post in postPage.list){
+		<div class="panel panel-default" data-post="${post.id}">
+			<div class="panel-heading">
+				<span class="label label-primary">${post.bbsUser.userName}</span>
+				<span class="label label-default">${printTime(post.createTime)}</span>
+				@if(postLP.index==1){
+				<span class="label label-default">${topic.pv}</span>
+				@}
+				
+				@if(_user!=null){
+				<div class="btn-group btn-group-xs pull-right">
+					<a class="btn btn-default supportPost" href="javascript:;" data-post = "${post.id!}" data-num = "1" data-toggle="tooltip" title="顶" ><i class="fa fa-thumbs-o-up"></i> <span class="supportNum">${post.pros!0}</span></a>
+					<a class="btn btn-default supportPost" href="javascript:;" data-post = "${post.id!}" data-num = "0" data-toggle="tooltip" title="踩" ><i class="fa fa-thumbs-o-down"></i> <span class="supportNum">${post.cons!0}</span></a>
+					<a class="btn ${post.isAccept == 0 ?'btn-default':'btn-success'} ${isAdmin?'adminAgree'}" href="javascript:;" data-toggle="tooltip" title="采纳"  data-post = "${post.id!}" ><i class="fa fa-star"></i></a>
+					@if(_user.id!0==post.userId||isAdmin){
+					<a class="btn btn-default" href="admin/post/edit/${post.id}" data-toggle="tooltip" title="编辑"  ><i class="fa fa-edit"></i></a>
+					<a class="btn btn-default" href="javascript:;" onclick="deletePost(this)" data-toggle="tooltip" title="删除"  ><i class="fa fa-trash"></i></a>
+					@}
+					<a class="btn btn-default" href="javascript:;" onclick="showReplyDialog('${post.id!}','${topic.id!}')" data-toggle="tooltip" title="回复"  ><i class="fa fa-reply"></i></a>
+				</div>
+				@}
+			</div>
+			<div class="panel-body">${post.content}</div>
+			@if(post.replys.~size>0){
+			<ul class="list-group">
+				@for(reply in post.replys){
+					<li class="list-group-item reply">
+						@include("/common/replyItem.html",{"reply":reply,"showbtn":(_user.id!0==reply.userId||isAdmin)}){}
+					</li>
+				@}
+			</ul>
+			@}
+		</div>
+		@}
+		<#page query="${postPage}" url="topic/${topic.id}/"/>
+		@if(_user!=null){
+		<form id="postForm" action="post/save" method="POST"  onsubmit="return ajaxSubmit(this,'reload')">
+			<input type="hidden" name="topicId" value="${topic.id}">
+			<div class="form-group">
+			<textarea id="postContent" name="content"></textarea>
+			</div>
+			<button type="submit" class="btn btn-sm btn-primary pull-right"><i class="fa fa-check"></i> 提 交</button>
+		</form>
+		@}
+@}
+<!-- 回复弹层 -->
+<div class="modal fade" id="reply-dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-body">
+				<form class="form-search" action="reply/save" onsubmit="return ajaxSubmit(this,'reload')" >
+					<input type="hidden" name="postId" value="${post.id!}"/>
+					<input type="hidden" name="topicId" value="${topic.id!}"/>
+					<div class="form-group">
+						<textarea placeholder="请输入回复内容" class="form-control" name="content" style="height:100px;resize:none;" maxlength="100"></textarea>
+					</div>
+					<button type="submit" class="btn btn-primary btn-block">确定提交</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<style>.panel-body img{max-width:100% !important;height:auto !important}</style>
+<link href="//cdn.bootcss.com/highlight.js/9.8.0/styles/github-gist.min.css" rel="stylesheet">
+<script src="//cdn.bootcss.com/highlight.js/9.8.0/highlight.min.js"></script>
+ <script>
+ $(function(){
+	 $("[data-toggle='tooltip']").tooltip();
+	 
+	 $('.deleteReply').on('click',function(){
+		 var _this = $(this);
+		 var p = _this.parents('.list-group-item');
+		 $.confirm('确定要删除该回复吗？',function(e){
+			 e&&$.post('admin/reply/delete/'+_this.data('id'),function(json){
+				 json.err?$.alert(json.msg):p.remove();
+			 })
+		 })
+	 })
+	 
+		//顶或踩
+	$('.supportPost').on('click',function(){
+	 		var _this = $(this);
+	 		var postId = _this.data('post');
+	 		var num = _this.data('num');
+	 		var supportNum = _this.children(".supportNum")
+	 		var data = {'num':num};
+	 		$.post('post/support/'+postId,data,function(json){
+	 			 json.err?$.alert(json.msg):supportNum.html(json.data);
+	 		 })
+		 })
+	 //管理员是否采纳
+	$('.adminAgree').on('click',function(){
+	 	var _this = $(this);
+	 	var postId = _this.data('post');
+	 	$.post('user/post/accept/'+postId,function(json){
+	 		 if(json.err){
+	 			$.alert(json.msg)
+	 		 }else{
+	 			if(json.data == 1){
+	 				_this.removeClass('btn-default')
+	 				_this.addClass('btn-success')
+	 			}else{
+	 				_this.addClass('btn-default')
+	 				_this.removeClass('btn-success')
+	 			}
+	 			
+	 		 }
+	 		 
+	 	 })
+
+	  })
+
+ })
+ 
+ 
+ hljs.initHighlightingOnLoad();
+ function showReplyDialog(postid,topicid){
+	 var dialog = $('#reply-dialog').modal('show');
+	 dialog.find('textarea').val('')
+	 dialog.find('[name=postId]').val(postid);
+	 dialog.find('[name=topicId]').val(topicid);
+ }
+ 
+ function deletePost(el){
+	 var p = $(el).parents('.panel-default[data-post]');
+	 $.confirm('确定要删除该内容吗？',function(e){
+		 e&&$.post('admin/post/delete/'+p.data('post'),function(json){
+			 json.err?$.alert(json.msg):p.remove();
+		 })
+	 })
+ }
+
+	 
+	 
+
+</script>
