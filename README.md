@@ -28,7 +28,7 @@
 
 * run BbsMain
 
-* access  http://127.0.0.1:8080/bbs/bbs/index/1.html,login as admin/123456 or register new user
+* access  http://127.0.0.1:8099/bbs/bbs/index/1.html, login as admin/123456 or register new user
 
 * maven install  生成的war包部署到服务器上
 

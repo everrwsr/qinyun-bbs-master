@@ -1,0 +1,38 @@
+server:
+  port: 8999
+  servlet.contextPath: /bbs
+
+spring.datasource:
+  url: jdbc:mysql://101.43.47.117:3306/qinyun?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&useSSL=false&allowPublicKeyRetrieval=true
+  username: qinyun
+  password: 4kjPHcmTa82DJYSJ
+  driver-class-name: com.mysql.cj.jdbc.Driver
+
+#搜索方式：es,lucene
+search.type: lucene
+  #Elasticsearch
+  #spring.data.elasticsearch.cluster-nodes=127.0.0.1:9300
+
+    #Elasticsearch bbs索引地址  使用ES的web restful接口方式 让BBS项目与ES解耦
+elasticsearch.bbs:
+  url: http://127.0.0.1:9200/bbs
+  content-url: http://127.0.0.1:9200/bbs/content/
+  content-search-url: http://127.0.0.1:9200/bbs/content/_search
+
+beetl.suffix: html
+
+beetlsql: sqlManager1
+beetlsql.sqlManager1:
+  ds: dataSource
+  basePackage: com.qinyun.bbs.dao
+  daoSuffix: Dao
+
+spring:
+      redis:
+        host: 101.43.47.117
+        port: 6379
+
+bbs.user:
+  register-same-ipL: 1 # 同一个IP一天只允许注册用户个数
+  topic-count: 2  # 同一个用户规定时间内只能发一个帖子
+  topic-count-minutes: 120
