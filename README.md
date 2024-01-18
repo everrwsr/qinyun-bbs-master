@@ -36,12 +36,61 @@
 
 默认自带luncense，以管理员登录后， 点击初始化引擎。 
 
-如果需要使用ES作为帖子搜索引擎
 
-* 安装elastic search 作为全文搜索：下载 https://www.elastic.co/cn/downloads/elasticsearch (截止当前测试ES版本7.2.0 通过),进入bin目录，调用elasticsearch 启动
 
-* 安装elastic search 分词：进入bin目录，运行 ./elasticsearch-plugin install  analysis-smartcn。然后重新启动elasticsearch
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[//]: # (如果需要使用ES作为帖子搜索引擎)
+
+[//]: # ()
+[//]: # (* 安装elastic search 作为全文搜索：下载 https://www.elastic.co/cn/downloads/elasticsearch &#40;截止当前测试ES版本7.2.0 通过&#41;,进入bin目录，调用elasticsearch 启动)
+
+[//]: # ()
+[//]: # (* 安装elastic search 分词：进入bin目录，运行 ./elasticsearch-plugin install  analysis-smartcn。然后重新启动elasticsearch)
+
+[//]: # ()
 
 
 

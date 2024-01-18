@@ -2,6 +2,9 @@ server:
   port: 8999
   servlet.contextPath: /bbs
 
+
+spring.mvc.servlet.path: /
+
 spring.datasource:
   url: jdbc:mysql://101.43.47.117:3306/qinyun?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&useSSL=false&allowPublicKeyRetrieval=true
   username: qinyun
@@ -28,11 +31,22 @@ beetlsql.sqlManager1:
   daoSuffix: Dao
 
 spring:
-      redis:
+  redis:
         host: 101.43.47.117
         port: 6379
+
+
+
+
+
+
+
+
 
 bbs.user:
   register-same-ipL: 1 # 同一个IP一天只允许注册用户个数
   topic-count: 2  # 同一个用户规定时间内只能发一个帖子
   topic-count-minutes: 120
+
+
+

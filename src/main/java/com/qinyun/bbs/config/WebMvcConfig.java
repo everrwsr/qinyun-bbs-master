@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -63,17 +62,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-
-        registry.addViewController("/").setViewName("forward:/index.html");
-        registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
-
-
         //无逻辑处理的控制器路由
         registry.setOrder(-1);//解决 => /bbs/topic/{id}导致匹配不到此处路由的问题
         registry.addViewController("/topic/add").setViewName("/post.html");
         registry.addViewController("/bbs/topic/add").setViewName("/post.html");
         registry.addViewController("/bbs/share").setViewName("forward:/bbs/topic/module/1");
-
     }
 
 
@@ -82,6 +75,4 @@ public class WebMvcConfig implements WebMvcConfigurer {
         //开启允许URL添加后缀也能访问到相应的Controller，以便兼容旧版本
         configurer.setUseSuffixPatternMatch(Boolean.TRUE);
     }
-
-
 }
